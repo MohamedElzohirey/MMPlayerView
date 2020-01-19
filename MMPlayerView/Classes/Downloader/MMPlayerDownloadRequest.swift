@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+@available(iOS 11.0, *)
 class MMPlayerDownloadRequest {
     let asset: AVURLAsset
     private var timer: Timer?

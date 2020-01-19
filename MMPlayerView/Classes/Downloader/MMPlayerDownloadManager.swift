@@ -8,6 +8,7 @@
 import UIKit
 import AVFoundation
 
+@available(iOS 11.0, *)
 extension MMPlayerDownloadManager {
     public enum Status {
         case none
@@ -17,6 +18,7 @@ extension MMPlayerDownloadManager {
     }
 }
 
+@available(iOS 11.0, *)
 class MMPlayerDownloadManager: NSObject {
     static let shared = MMPlayerDownloadManager(identifier: "Shared-Identifier")
     private var hlsSession: AVAssetDownloadURLSession!
@@ -55,6 +57,7 @@ class MMPlayerDownloadManager: NSObject {
     }
 }
 
+@available(iOS 11.0, *)
 extension MMPlayerDownloadManager: AVAssetDownloadDelegate, URLSessionDownloadDelegate {
     // normal file
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
@@ -81,11 +84,13 @@ extension MMPlayerDownloadManager: AVAssetDownloadDelegate, URLSessionDownloadDe
         }
     }
     // hls file
+    @available(iOS 11.0, *)
     func urlSession(_ session: URLSession, aggregateAssetDownloadTask: AVAggregateAssetDownloadTask,
                     willDownloadTo location: URL) {
         willDownloadToUrlMap[aggregateAssetDownloadTask] = location
     }
     
+    @available(iOS 11.0, *)
     func urlSession(_ session: URLSession, aggregateAssetDownloadTask: AVAggregateAssetDownloadTask,
                     didLoad timeRange: CMTimeRange, totalTimeRangesLoaded loadedTimeRanges: [NSValue],
                     timeRangeExpectedToLoad: CMTimeRange, for mediaSelection: AVMediaSelection) {
@@ -98,6 +103,7 @@ extension MMPlayerDownloadManager: AVAssetDownloadDelegate, URLSessionDownloadDe
     }
 }
 
+@available(iOS 11.0, *)
 extension MMPlayerDownloadManager {
     private func aggregateError(session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let task = task as? AVAggregateAssetDownloadTask else { return }

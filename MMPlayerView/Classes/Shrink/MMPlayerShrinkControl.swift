@@ -112,9 +112,15 @@ public class MMPlayerShrinkControl {
         let maxWidth: CGFloat = self.maxWidth
         let margin: CGFloat = 10.0
         let size = UIScreen.main.bounds
-        let safe = UIApplication.shared.keyWindow?.safeAreaInsets ?? .zero
-        let safeTop: CGFloat = safe.top
-        let safeBottom: CGFloat = safe.bottom
+        var safeTop: CGFloat = 0.0
+        var safeBottom: CGFloat = 0.0
+        if #available(iOS 11.0, *) {
+            let safe = UIApplication.shared.keyWindow?.safeAreaInsets ?? .zero
+            safeTop = safe.top
+            safeBottom = safe.bottom
+        } else {
+            // Fallback on earlier versions
+        }
         let videoRectSize = mmPlayerLayer.videoRect.size
         if videoRectSize != .zero {
             if videoRectSize.width > videoRectSize.height {

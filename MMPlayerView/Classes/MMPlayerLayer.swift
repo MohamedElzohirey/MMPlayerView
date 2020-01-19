@@ -422,23 +422,27 @@ extension MMPlayerLayer {
         if asset?.url == self.asset?.url {
             return
         }
-        if let will = asset ,
-            self.cahce.getItem(key: will.url) == nil,
-            let real = MMPlayerDownloader.shared.localFileFrom(url: will.url),
-            lodDiskIfExist {
-            switch real.type {
-            case .hls:
-                var statle = false
-                if let data = try? Data(contentsOf: real.localURL),
-                    let convert = try? URL(resolvingBookmarkData: data, bookmarkDataIsStale: &statle) {
-                    self.asset = AVURLAsset(url: convert)
-                } else {
-                    self.asset = asset
+        if #available(iOS 11.0, *) {
+            if let will = asset ,
+                self.cahce.getItem(key: will.url) == nil,
+                let real = MMPlayerDownloader.shared.localFileFrom(url: will.url),
+                lodDiskIfExist {
+                switch real.type {
+                case .hls:
+                    var statle = false
+                    if let data = try? Data(contentsOf: real.localURL),
+                        let convert = try? URL(resolvingBookmarkData: data, bookmarkDataIsStale: &statle) {
+                        self.asset = AVURLAsset(url: convert)
+                    } else {
+                        self.asset = asset
+                    }
+                case .mp4:
+                    self.asset = AVURLAsset(url: real.localURL)
                 }
-            case .mp4:
-                self.asset = AVURLAsset(url: real.localURL)
+                return
             }
-            return
+        } else {
+            // Fallback on earlier versions
         }
         self.asset = asset
     }
@@ -740,6 +744,7 @@ extension MMPlayerLayer {
 // MARK: - Download
 extension MMPlayerLayer {
     
+    @available(iOS 11.0, *)
     public func download(observer status: @escaping ((MMPlayerDownloader.DownloadStatus)->Void)) -> MMPlayerObservation? {
         guard let asset = self.asset else {
             status(.failed(err: "URL empty"))
@@ -754,6 +759,7 @@ extension MMPlayerLayer {
         return self.observerDownload(status: status)
     }
     
+    @available(iOS 11.0, *)
     public func observerDownload(status: @escaping ((MMPlayerDownloader.DownloadStatus)->Void)) -> MMPlayerObservation? {
         guard let url = self.asset?.url else {
             status(.failed(err: "URL empty"))
