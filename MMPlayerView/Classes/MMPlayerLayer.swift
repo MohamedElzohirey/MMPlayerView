@@ -637,7 +637,9 @@ extension MMPlayerLayer {
         
         NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil, using: { [weak self] (nitification) in
             if self?.isBackgroundPause == false {
-                self?.player?.play()
+                if self?.autoPlay == true {
+                    self?.player?.play()
+                }
             }
             self?.isBackgroundPause = false
         })
