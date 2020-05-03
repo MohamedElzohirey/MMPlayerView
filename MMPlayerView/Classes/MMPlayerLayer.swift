@@ -196,6 +196,7 @@ public class MMPlayerLayer: AVPlayerLayer {
                 self.coverView?.isHidden = false
                 if self.autoPlay {
                     self.player?.play()
+                    self.player?.isMuted = true
                 }
             case .failed(err: _):
                 self.thumbImageView.isHidden = false
