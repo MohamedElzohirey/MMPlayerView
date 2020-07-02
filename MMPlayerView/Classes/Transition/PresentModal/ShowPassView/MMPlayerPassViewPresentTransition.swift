@@ -41,7 +41,7 @@ class MMPlayerPassViewPresentTransition: MMPlayerBasePresentTransition, UIViewCo
             fromProtocol.transitionWillStart()
 
             let convertRect:CGRect = passLayer.superlayer?.convert(passLayer.frame, to: nil) ?? .zero
-            let convertTo = passContainer.superview?.convert(passContainer.frame, to: container) ?? .zero
+            let convertTo = passContainer?.superview?.convert(passContainer?.frame ?? .zero, to: container) ?? .zero
 
             let finalFrame = transitionContext.finalFrame(for: toVC)
             let originalColor = toVC.view.backgroundColor

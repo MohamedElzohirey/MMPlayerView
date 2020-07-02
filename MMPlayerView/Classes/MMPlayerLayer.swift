@@ -54,6 +54,8 @@ public extension MMPlayerLayer {
         case landscapeRight
         case protrait
     }
+    
+    static var playerControlAlwaysVisibleTag : Int = -1
 }
 
 public class MMPlayerLayer: AVPlayerLayer {
@@ -193,25 +195,38 @@ public class MMPlayerLayer: AVPlayerLayer {
             switch self.currentPlayStatus {
             case .ready:
                 self.thumbImageView.isHidden = false
-                self.coverView?.isHidden = false
+                self.setCoverItemsVisibility(isHidden: false)
                 if self.autoPlay {
                     self.player?.play()
                     self.player?.isMuted = true
                 }
             case .failed(err: _):
                 self.thumbImageView.isHidden = false
-                self.coverView?.isHidden = false
+                self.setCoverItemsVisibility(isHidden: false)
                 self.startLoading(isStart: false)
             case .unknown:
                 self.thumbImageView.isHidden = false
-                self.coverView?.isHidden = true
+                self.setCoverItemsVisibility(isHidden: true)
                 self.startLoading(isStart: false)
             default:
                 self.thumbImageView.isHidden = true
-                self.coverView?.isHidden = false
+                self.setCoverItemsVisibility(isHidden: false)
                 break
             }
         }
+    }
+    
+    /**
+     Set coverView items to be visible or not
+     Set slider to higlited or not
+     
+     ```
+     only show tag == MMPlayerLayer.playerControlAlwaysVisibleTag
+     ```
+     */
+    func setCoverItemsVisibility(isHidden: Bool) {
+        self.coverView?.subviews.filter({ $0.tag != MMPlayerLayer.playerControlAlwaysVisibleTag }).forEach({ $0.alpha = isHidden ? 0 : 1 })
+        self.coverView?.playSlider?.isSelected = isHidden
     }
     /**
      Set AVPlayerItem cache in memory or not
@@ -390,6 +405,7 @@ extension MMPlayerLayer {
     public func replace(cover: UIView & MMPlayerCoverViewProtocol) {
         if let c = self.coverView ,c.isMember(of: cover.classForCoder) {
             c.alpha = 1.0
+            c.subviews.forEach({ $0.alpha = 1 })
             return
         }
         cover.backgroundColor = UIColor.clear
@@ -546,7 +562,7 @@ extension MMPlayerLayer {
         }
         
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
-            self?.coverView?.alpha = (isShow) ? 1.0 : 0.0
+            self?.setCoverItemsVisibility(isHidden: !isShow)
         })
     }
 }
@@ -580,7 +596,7 @@ extension MMPlayerLayer {
     private func updateCoverConstraint() {
         let vRect = self.coverFitType == .fitToVideoRect ? videoRect : bgView.bounds
         if !vRect.isEmpty {
-            self.coverView?.isHidden = (self.tapGesture.isEnabled) ? false : true
+            self.setCoverItemsVisibility(isHidden: (self.tapGesture.isEnabled) ? false : true)
             self.coverView?.frame = vRect
         }
         if bgView.bounds == self.frame { return }
